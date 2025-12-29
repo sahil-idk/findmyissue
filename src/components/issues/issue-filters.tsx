@@ -49,14 +49,14 @@ export function IssueFilters({ organizations }: IssueFiltersProps) {
     <div className="flex flex-col gap-4 rounded-lg border bg-card p-4">
       <div className="flex flex-wrap items-center gap-4">
         <Select
-          value={searchParams.get("organization") || ""}
-          onValueChange={(value) => updateFilters("organization", value || null)}
+          value={searchParams.get("organization") || "all"}
+          onValueChange={(value) => updateFilters("organization", value === "all" ? null : value)}
         >
           <SelectTrigger className="w-[200px]">
             <SelectValue placeholder="Organization" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Organizations</SelectItem>
+            <SelectItem value="all">All Organizations</SelectItem>
             {organizations.map((org) => (
               <SelectItem key={org.slug} value={org.slug}>
                 {org.name}
@@ -66,14 +66,14 @@ export function IssueFilters({ organizations }: IssueFiltersProps) {
         </Select>
 
         <Select
-          value={searchParams.get("maxJamFactor") || ""}
-          onValueChange={(value) => updateFilters("maxJamFactor", value || null)}
+          value={searchParams.get("maxJamFactor") || "all"}
+          onValueChange={(value) => updateFilters("maxJamFactor", value === "all" ? null : value)}
         >
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Competition Level" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Any Competition</SelectItem>
+            <SelectItem value="all">Any Competition</SelectItem>
             <SelectItem value="2">Low (0-2)</SelectItem>
             <SelectItem value="4">Moderate (0-4)</SelectItem>
             <SelectItem value="7">High (0-7)</SelectItem>
@@ -81,14 +81,14 @@ export function IssueFilters({ organizations }: IssueFiltersProps) {
         </Select>
 
         <Select
-          value={searchParams.get("minScore") || ""}
-          onValueChange={(value) => updateFilters("minScore", value || null)}
+          value={searchParams.get("minScore") || "all"}
+          onValueChange={(value) => updateFilters("minScore", value === "all" ? null : value)}
         >
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Min Score" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Any Score</SelectItem>
+            <SelectItem value="all">Any Score</SelectItem>
             <SelectItem value="8">Excellent (8+)</SelectItem>
             <SelectItem value="6">Good (6+)</SelectItem>
             <SelectItem value="4">Fair (4+)</SelectItem>
@@ -96,14 +96,14 @@ export function IssueFilters({ organizations }: IssueFiltersProps) {
         </Select>
 
         <Select
-          value={searchParams.get("difficulty") || ""}
-          onValueChange={(value) => updateFilters("difficulty", value || null)}
+          value={searchParams.get("difficulty") || "all"}
+          onValueChange={(value) => updateFilters("difficulty", value === "all" ? null : value)}
         >
           <SelectTrigger className="w-[150px]">
             <SelectValue placeholder="Difficulty" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Any Difficulty</SelectItem>
+            <SelectItem value="all">Any Difficulty</SelectItem>
             <SelectItem value="beginner">Beginner</SelectItem>
             <SelectItem value="intermediate">Intermediate</SelectItem>
             <SelectItem value="advanced">Advanced</SelectItem>
