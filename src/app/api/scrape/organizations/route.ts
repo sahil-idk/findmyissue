@@ -58,43 +58,66 @@ export async function POST() {
       websiteUrl?: string;
       technologies: string[];
       yearsParticipated: number[];
+      category?: string;
+      logoUrl?: string;
     }> = [];
 
-    // Parse organization cards - selectors may need adjustment based on actual site structure
-    $(".card, .org-card, [data-org], .organization, .ui.card").each((_, element) => {
+    // Parse organization cards using actual class names from gsocorganizations.dev
+    $(".org-card-container").each((_, element) => {
       const card = $(element);
-      const name = card.find(".header, .title, .org-name, h3, h4, .content .header").first().text().trim();
 
+      // Extract organization name
+      const name = card.find(".org-card-name-container").text().trim();
       if (!name || name.length < 2) return;
 
-      const description = card.find(".description, .content, .org-description, .meta, p").first().text().trim();
+      // Extract description
+      const description = card.find(".org-card-description-container").text().trim();
 
-      const links: string[] = [];
-      card.find("a").each((_, a) => {
-        const href = $(a).attr("href");
-        if (href) links.push(href);
-      });
+      // Extract category
+      const category = card.find(".org-card-category-container").text().trim();
 
+      // Extract logo URL from style attribute
+      const logoDiv = card.find(".org-card-logo");
+      const logoStyle = logoDiv.attr("style") || "";
+      const logoMatch = logoStyle.match(/url\(["']?([^"')]+)["']?\)/);
+      const logoUrl = logoMatch ? logoMatch[1] : undefined;
+
+      // Extract technologies
       const technologies: string[] = [];
-      card.find(".tech, .technology, .tag, .label, .ui.label").each((_, tag) => {
+      card.find(".org-card-technology").each((_, tag) => {
         const tech = $(tag).text().trim();
-        if (tech && tech.length < 30 && tech.length > 1) technologies.push(tech);
+        if (tech && tech.length > 0) {
+          technologies.push(tech);
+        }
       });
 
-      const yearsText = card.text();
-      const years = parseYears(yearsText);
+      // Extract years participated
+      const years: number[] = [];
+      card.find(".org-card-year").each((_, yearSpan) => {
+        const yearText = $(yearSpan).text().trim();
+        const year = parseInt(yearText, 10);
+        if (year >= 2005 && year <= new Date().getFullYear()) {
+          years.push(year);
+        }
+      });
 
-      const githubUrl = links.find((l) => l.includes("github.com"));
-      const websiteUrl = links.find((l) => !l.includes("github.com") && l.startsWith("http"));
+      // Get the organization slug from the parent link
+      const parentLink = card.parent("a");
+      const orgPath = parentLink.attr("href") || "";
+      const slugMatch = orgPath.match(/\/organization\/([^/]+)/);
+      const slug = slugMatch ? slugMatch[1] : generateSlug(name);
+
+      // For now, we don't have direct GitHub/Website URLs from the listing page
+      // These can be scraped from individual org pages later if needed
 
       orgs.push({
         name,
-        slug: generateSlug(name),
+        slug,
         description: description.slice(0, 1000),
-        githubUrl,
-        websiteUrl,
-        technologies: technologies.slice(0, 20),
+        technologies,
         yearsParticipated: years,
+        category,
+        logoUrl,
       });
     });
 
@@ -116,8 +139,7 @@ export async function POST() {
           .set({
             name: org.name,
             description: org.description,
-            githubUrl: org.githubUrl,
-            websiteUrl: org.websiteUrl,
+            logoUrl: org.logoUrl,
             technologies: org.technologies,
             yearsParticipated: org.yearsParticipated,
             longevityYears,
@@ -132,8 +154,7 @@ export async function POST() {
           slug: org.slug,
           name: org.name,
           description: org.description,
-          githubUrl: org.githubUrl,
-          websiteUrl: org.websiteUrl,
+          logoUrl: org.logoUrl,
           technologies: org.technologies,
           yearsParticipated: org.yearsParticipated,
           longevityYears,
