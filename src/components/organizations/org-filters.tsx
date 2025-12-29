@@ -64,16 +64,16 @@ export function OrganizationFilters({ technologies }: OrganizationFiltersProps) 
         </div>
 
         <Select
-          value={searchParams.get("technology") || ""}
+          value={searchParams.get("technology") || "all"}
           onValueChange={(value) =>
-            updateFilters("technology", value || null)
+            updateFilters("technology", value === "all" ? null : value)
           }
         >
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Technology" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Technologies</SelectItem>
+            <SelectItem value="all">All Technologies</SelectItem>
             {technologies.slice(0, 30).map((tech) => (
               <SelectItem key={tech} value={tech}>
                 {tech}
@@ -83,14 +83,14 @@ export function OrganizationFilters({ technologies }: OrganizationFiltersProps) 
         </Select>
 
         <Select
-          value={searchParams.get("longevity") || ""}
-          onValueChange={(value) => updateFilters("longevity", value || null)}
+          value={searchParams.get("longevity") || "all"}
+          onValueChange={(value) => updateFilters("longevity", value === "all" ? null : value)}
         >
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Experience Level" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Levels</SelectItem>
+            <SelectItem value="all">All Levels</SelectItem>
             <SelectItem value="veteran">Veteran (7+ years)</SelectItem>
             <SelectItem value="experienced">Experienced (3-6 years)</SelectItem>
             <SelectItem value="newcomer">Newcomer (1-2 years)</SelectItem>
